@@ -23,12 +23,10 @@ class userController extends Controller
         } else {
             $user = User::where('email', $request->email)->first();
             if ($user) {
-
                 if (Hash::check($request->password, $user->password)) {
-                    $tokenResult = $user->createToken('studio');
+                    $tokenResult = $user->createToken('laravel');
                     $accessToken = $tokenResult->accessToken;
                     $otp = mt_rand(100000, 999999);
-
 
                     dispatch(new SendOtpEmail($user, $otp));
                     // SendOtpEmail::dispatch($user, $otp);
@@ -38,10 +36,10 @@ class userController extends Controller
                     ];
                     return response($response, 200);
                 } else {
-                    return response()->json(['status_code' => 397, "error_code" => "Password mismatch"]);
+                    return response()->json(['status_code' => 400, "error_code" => "Password mismatch"]);
                 }
             } else {
-                return response()->json(['status_code' => 396, 'error_code' => "User doesn't exist"]);
+                return response()->json(['status_code' => 400, 'error_code' => "User doesn't exist"]);
             }
         }
     }
